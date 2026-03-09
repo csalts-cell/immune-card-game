@@ -2,35 +2,50 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Immune Defense Card Game</title>
+<title>Immune Card Creator</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<h1>Immune Defense</h1>
+<h1>Immune Cell Card Designer</h1>
 
-<div id="battlefield">
-
-<div id="enemy-area">
-<h2>Pathogen</h2>
-<div id="enemy-card"></div>
-</div>
-
-<div id="player-area">
-<h2>Your Immune Cells</h2>
-<div id="hand"></div>
-</div>
-
-</div>
+<div id="editor">
 
 <div id="controls">
-<button onclick="drawHand()">Draw New Cells</button>
+
+<label>Card Name</label>
+<input id="nameInput" placeholder="Macrophage">
+
+<label>Hit Points</label>
+<input id="hpInput" type="number" placeholder="10">
+
+<label>Defense</label>
+<input id="defInput" type="number" placeholder="5">
+
+<label>Card Color</label>
+<input type="color" id="colorPicker">
+
+<label>Background Image</label>
+<input type="text" id="bgInput" placeholder="Paste image URL">
+
+<button onclick="updateCard()">Apply Design</button>
+
 </div>
 
-<div id="result"></div>
+<div id="card">
 
-<script src="cards.js"></script>
+<div id="cardName">Cell Name</div>
+
+<div id="cardStats">
+HP: <span id="hp">0</span>  
+DEF: <span id="def">0</span>
+</div>
+
+</div>
+
+</div>
+
 <script src="game.js"></script>
 
 </body>
