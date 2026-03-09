@@ -1,0 +1,344 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { Shield, Sword, Heart, Activity, Trash2, Download, Eraser, Edit3, Info } from 'lucide-react';
+
+const App = () => {
+  const [view, setView] = useState('home'); // 'home', 'example', 'editor'
+  const [selectedCell, setSelectedCell] = useState(null);
+  const [brushColor, setBrushColor] = useState('#ef4444');
+  const [brushSize, setBrushSize] = useState(5);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [stats, setStats] = useState({
+    name: '',
+    class: 'Innate',
+    power: '',
+    weakness: ''
+  });
+
+  const canvasRef = useRef(null);
+  const contextRef = useRef(null);
+
+  const cellTypes = [
+    { id: 'macrophage', name: 'Macrophage', class: 'Innate', description: 'The Big Eater. Engulfs and digests debris.' },
+    { id: 'bcell', name: 'B-Cell', class: 'Adaptive', description: 'The Weapon Factory. Produces specific antibodies.' },
+    { id: 'killer-t', name: 'Killer T-Cell', class: 'Adaptive', description: 'The Assassin. Destroys infected body cells.' },
+    { id: 'neutrophil', name: 'Neutrophil', class: 'Innate', description: 'The First Responder. Fast but short-lived.' },
+    { id: 'helper-t', name: 'Helper T-Cell', class: 'Adaptive', description: 'The General. Coordinates the entire attack.' }
+  ];
+
+  useEffect(() => {
+    if (view === 'editor' && canvasRef.current) {
+      const canvas = canvasRef.current;
+      canvas.width = canvas.offsetWidth * 2;
+      canvas.height = canvas.offsetHeight * 2;
+      canvas.style.width = `${canvas.offsetWidth}px`;
+      canvas.style.height = `${canvas.offsetHeight}px`;
+
+      const context = canvas.getContext('2d');
+      context.scale(2, 2);
+      context.lineCap = 'round';
+      context.strokeStyle = brushColor;
+      context.lineWidth = brushSize;
+      contextRef.current = context;
+    }
+  }, [view]);
+
+  const startDrawing = ({ nativeEvent }) => {
+    const { offsetX, offsetY } = nativeEvent;
+    contextRef.current.beginPath();
+    contextRef.current.moveTo(offsetX, offsetY);
+    setIsDrawing(true);
+  };
+
+  const draw = ({ nativeEvent }) => {
+    if (!isDrawing) return;
+    const { offsetX, offsetY } = nativeEvent;
+    contextRef.current.lineTo(offsetX, offsetY);
+    contextRef.current.stroke();
+  };
+
+  const stopDrawing = () => {
+    contextRef.current.closePath();
+    setIsDrawing(false);
+  };
+
+  const clearCanvas = () => {
+    const canvas = canvasRef.current;
+    const context = canvas.getContext('2d');
+    context.clearRect(0, 0, canvas.width, canvas.height);
+  };
+
+  const handleExport = () => {
+    const canvas = canvasRef.current;
+    const link = document.createElement('a');
+    link.download = `ImmuneHero-${stats.name || 'Cell'}.png`;
+    link.href = canvas.toDataURL();
+    link.click();
+  };
+
+  useEffect(() => {
+    if (contextRef.current) {
+      contextRef.current.strokeStyle = brushColor;
+      contextRef.current.lineWidth = brushSize;
+    }
+  }, [brushColor, brushSize]);
+
+  // Main Components
+  const Home = () => (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 p-6">
+      <div className="max-w-2xl w-full text-center space-y-8">
+        <div className="inline-block p-3 bg-red-100 rounded-full text-red-600 mb-4">
+          <Shield size={48} strokeWidth={1.5} />
+        </div>
+        <h1 className="text-4xl font-bold text-slate-900">Architects of Immunity</h1>
+        <p className="text-xl text-slate-600">
+          Step into the biological battlefield. Create your own "Immune Hero" trading card 
+          to showcase how our body defends itself against invaders.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <button 
+            onClick={() => setView('example')}
+            className="p-6 bg-white border-2 border-slate-200 rounded-2xl hover:border-blue-500 hover:bg-blue-50 transition-all text-left shadow-sm group"
+          >
+            <Info className="text-blue-500 mb-2" />
+            <h3 className="text-xl font-semibold">View Example</h3>
+            <p className="text-sm text-slate-500">See a completed Macrophage "Hero Card".</p>
+          </button>
+          <button 
+            onClick={() => setView('editor')}
+            className="p-6 bg-white border-2 border-slate-200 rounded-2xl hover:border-red-500 hover:bg-red-50 transition-all text-left shadow-sm group"
+          >
+            <Edit3 className="text-red-500 mb-2" />
+            <h3 className="text-xl font-semibold">Start Activity</h3>
+            <p className="text-sm text-slate-500">Draw your own cell and define its powers.</p>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const ExampleCard = () => (
+    <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
+      <div className="bg-white w-96 rounded-[2rem] shadow-2xl overflow-hidden border-8 border-red-500 transform transition-transform hover:scale-105">
+        <div className="bg-red-500 p-4 flex justify-between items-center text-white">
+          <h2 className="text-2xl font-black uppercase tracking-wider">Macrophage</h2>
+          <span className="bg-white text-red-500 px-3 py-1 rounded-full text-xs font-bold">INNATE</span>
+        </div>
+        
+        <div className="h-64 bg-slate-200 flex items-center justify-center relative overflow-hidden">
+            {/* Mock illustration using SVGs/CSS */}
+            <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-48 h-48 bg-red-400 rounded-full opacity-20 animate-pulse"></div>
+                <div className="absolute w-40 h-40 bg-red-500 rounded-full flex items-center justify-center border-4 border-white shadow-lg">
+                    <Shield size={64} color="white" />
+                </div>
+            </div>
+            <div className="absolute bottom-4 left-4 right-4 bg-black/60 backdrop-blur-sm text-white p-2 rounded text-[10px] leading-tight italic">
+                "I am the vacuum of the tissues. None shall pass, for I shall consume."
+            </div>
+        </div>
+
+        <div className="p-6 space-y-4">
+          <div className="flex items-center gap-3">
+            <Sword size={20} className="text-red-500" />
+            <div>
+              <p className="text-[10px] font-bold text-slate-400 uppercase">Primary Superpower</p>
+              <p className="font-semibold text-slate-800">Phagocytosis (The Big Eat)</p>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-3">
+            <Activity size={20} className="text-red-500" />
+            <div>
+              <p className="text-[10px] font-bold text-slate-400 uppercase">Battle Tactic</p>
+              <p className="text-sm text-slate-700">Settles in infected tissue and acts as a filter, slowly engulfing pathogens.</p>
+            </div>
+          </div>
+
+          <div className="pt-4 border-t border-slate-100 flex justify-between items-center">
+            <div className="flex gap-1 text-red-500">
+              <Heart size={16} fill="currentColor" />
+              <Heart size={16} fill="currentColor" />
+              <Heart size={16} fill="currentColor" />
+              <Heart size={16} />
+            </div>
+            <span className="text-[10px] font-bold text-slate-400">DEFENSE LVL: HIGH</span>
+          </div>
+        </div>
+      </div>
+      <button 
+        onClick={() => setView('home')}
+        className="fixed bottom-8 left-8 bg-slate-800 text-white px-6 py-2 rounded-full font-medium"
+      >
+        Back to Home
+      </button>
+    </div>
+  );
+
+  const EditorView = () => (
+    <div className="min-h-screen bg-slate-100 flex flex-col md:flex-row h-screen">
+      {/* Sidebar - Controls */}
+      <div className="w-full md:w-80 bg-white border-r border-slate-200 p-6 overflow-y-auto space-y-6">
+        <div>
+          <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+            <Edit3 size={20} /> Identity
+          </h2>
+          <div className="space-y-4">
+            <div>
+              <label className="text-xs font-bold text-slate-400 uppercase">Select Cell Archetype</label>
+              <select 
+                onChange={(e) => {
+                    const cell = cellTypes.find(c => c.id === e.target.value);
+                    setSelectedCell(cell);
+                    setStats({...stats, name: cell?.name || '', class: cell?.class || 'Innate'});
+                }}
+                className="w-full mt-1 p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm"
+              >
+                <option value="">Choose a cell...</option>
+                {cellTypes.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+              </select>
+            </div>
+            <div>
+                <label className="text-xs font-bold text-slate-400 uppercase">Hero Name</label>
+                <input 
+                    type="text" 
+                    value={stats.name}
+                    onChange={(e) => setStats({...stats, name: e.target.value})}
+                    placeholder="E.g. Captain Killer T"
+                    className="w-full mt-1 p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm"
+                />
+            </div>
+            <div>
+                <label className="text-xs font-bold text-slate-400 uppercase">Superpower Description</label>
+                <textarea 
+                    value={stats.power}
+                    onChange={(e) => setStats({...stats, power: e.target.value})}
+                    placeholder="How does this hero fight pathogens?"
+                    className="w-full mt-1 p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm h-20"
+                />
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+            <Sword size={20} /> Art Tools
+          </h2>
+          <div className="space-y-4">
+            <div className="flex gap-2 flex-wrap">
+              {['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#000000'].map(color => (
+                <button 
+                  key={color}
+                  onClick={() => setBrushColor(color)}
+                  className={`w-8 h-8 rounded-full border-2 ${brushColor === color ? 'border-slate-800 scale-110' : 'border-transparent'}`}
+                  style={{ backgroundColor: color }}
+                />
+              ))}
+              <button 
+                onClick={() => setBrushColor('#ffffff')}
+                className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${brushColor === '#ffffff' ? 'border-slate-800' : 'border-slate-200'}`}
+              >
+                <Eraser size={14} />
+              </button>
+            </div>
+            <div>
+                <label className="text-xs font-bold text-slate-400 uppercase">Brush Size</label>
+                <input 
+                    type="range" min="1" max="20" 
+                    value={brushSize}
+                    onChange={(e) => setBrushSize(parseInt(e.target.value))}
+                    className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer mt-2"
+                />
+            </div>
+          </div>
+        </div>
+
+        <div className="pt-4 border-t space-y-2">
+            <button 
+                onClick={clearCanvas}
+                className="w-full flex items-center justify-center gap-2 py-2 text-red-500 font-semibold hover:bg-red-50 rounded-lg"
+            >
+                <Trash2 size={18} /> Reset Canvas
+            </button>
+            <button 
+                onClick={handleExport}
+                className="w-full flex items-center justify-center gap-2 py-3 bg-slate-900 text-white font-bold rounded-xl shadow-lg hover:bg-slate-800 transition-colors"
+            >
+                <Download size={18} /> Export Card
+            </button>
+        </div>
+      </div>
+
+      {/* Main Area - Canvas */}
+      <div className="flex-1 p-8 flex flex-col items-center justify-center overflow-hidden">
+         <div className="mb-4 text-center hidden md:block">
+            <h2 className="text-2xl font-black text-slate-800 uppercase tracking-tighter">Immune Hero Studio</h2>
+            <p className="text-slate-500 italic">Draw your defender in the box below</p>
+         </div>
+
+         {/* The Card Template */}
+         <div id="card-to-export" className="bg-white w-[380px] h-[550px] rounded-[2rem] shadow-2xl overflow-hidden border-8 border-slate-900 flex flex-col">
+            <div className="bg-slate-900 p-4 flex justify-between items-center text-white">
+                <h2 className="text-xl font-black uppercase tracking-wider truncate mr-2">
+                    {stats.name || 'Your Hero'}
+                </h2>
+                <span className="bg-white text-slate-900 px-3 py-1 rounded-full text-[10px] font-black shrink-0">
+                    {stats.class.toUpperCase()}
+                </span>
+            </div>
+
+            <div className="relative flex-1 bg-slate-50">
+                <canvas 
+                    ref={canvasRef}
+                    onMouseDown={startDrawing}
+                    onMouseMove={draw}
+                    onMouseUp={stopDrawing}
+                    onMouseLeave={stopDrawing}
+                    className="w-full h-full cursor-crosshair"
+                    style={{ touchAction: 'none' }}
+                />
+                {!selectedCell && (
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none p-12 text-center text-slate-300">
+                        <p className="text-sm font-medium">Select an archetype on the left to begin your research and drawing</p>
+                    </div>
+                )}
+            </div>
+
+            <div className="p-4 bg-white border-t-4 border-slate-900 h-40 flex flex-col justify-between">
+                <div>
+                    <div className="flex items-center gap-2 mb-1">
+                        <Sword size={14} className="text-red-500" />
+                        <span className="text-[9px] font-black text-slate-400 uppercase">Active Superpower</span>
+                    </div>
+                    <p className="text-xs text-slate-700 leading-tight">
+                        {stats.power || "Awaiting hero's mission brief..."}
+                    </p>
+                </div>
+                
+                <div className="flex justify-between items-end">
+                    <div className="flex gap-1 text-slate-900">
+                        <Shield size={14} fill="currentColor" />
+                        <Shield size={14} fill="currentColor" />
+                        <Shield size={14} />
+                    </div>
+                    <div className="text-right">
+                        <span className="block text-[8px] font-bold text-slate-400">DEFENDER ID</span>
+                        <span className="text-[10px] font-mono text-slate-600">#IMM-{Math.floor(Math.random()*9000)+1000}</span>
+                    </div>
+                </div>
+            </div>
+         </div>
+         <button onClick={() => setView('home')} className="mt-8 text-slate-400 hover:text-slate-600 underline text-sm">Cancel and Return</button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="font-sans antialiased text-slate-900">
+      {view === 'home' && <Home />}
+      {view === 'example' && <ExampleCard />}
+      {view === 'editor' && <EditorView />}
+    </div>
+  );
+};
+
+export default App;
