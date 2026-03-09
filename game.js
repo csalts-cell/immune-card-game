@@ -1,60 +1,24 @@
-let currentEnemy;
+function updateCard(){
 
-function newEnemy(){
+let name = document.getElementById("nameInput").value
+let hp = document.getElementById("hpInput").value
+let def = document.getElementById("defInput").value
+let color = document.getElementById("colorPicker").value
+let bg = document.getElementById("bgInput").value
 
-currentEnemy = pathogens[Math.floor(Math.random()*pathogens.length)];
-
-document.getElementById("enemy-card").innerHTML =
-"<h3>"+currentEnemy.name+"</h3>" +
-"<p>Power: "+currentEnemy.power+"</p>";
-
+if(name){
+document.getElementById("cardName").innerText = name
 }
 
-function drawHand(){
+document.getElementById("hp").innerText = hp
+document.getElementById("def").innerText = def
 
-let hand = document.getElementById("hand");
-hand.innerHTML="";
+let card = document.getElementById("card")
 
-for(let i=0;i<4;i++){
+card.style.backgroundColor = color
 
-let card = immuneCards[Math.floor(Math.random()*immuneCards.length)];
-
-let div = document.createElement("div");
-div.className="card";
-
-div.innerHTML=
-"<div class='card-name'>"+card.name+"</div>" +
-"<div>"+card.ability+"</div>" +
-"<div class='card-power'>Power: "+card.power+"</div>";
-
-div.onclick=function(){
-playCard(card);
-};
-
-hand.appendChild(div);
-
+if(bg){
+card.style.backgroundImage = "url("+bg+")"
 }
 
 }
-
-function playCard(card){
-
-if(card.power >= currentEnemy.power){
-
-document.getElementById("result").innerHTML =
-card.name+" defeated the "+currentEnemy.name+"!";
-
-}else{
-
-document.getElementById("result").innerHTML =
-card.name+" failed to defeat the "+currentEnemy.name+".";
-
-}
-
-newEnemy();
-drawHand();
-
-}
-
-newEnemy();
-drawHand();
