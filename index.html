@@ -21,30 +21,44 @@
 <input id="markerInput" placeholder="CD4">
 
 <label>Attack</label>
-<input id="attackInput" type="number" placeholder="5">
+<input id="attackInput" type="number">
 
 <label>Defense</label>
-<input id="defenseInput" type="number" placeholder="3">
+<input id="defenseInput" type="number">
 
 <label>Hit Points</label>
-<input id="hpInput" type="number" placeholder="10">
+<input id="hpInput" type="number">
 
 <label>Special Ability</label>
 <input id="abilityInput" placeholder="Engulf Pathogens">
+
+<label>Rarity</label>
+<select id="raritySelect">
+<option value="common">Common</option>
+<option value="rare">Rare</option>
+<option value="legendary">Legendary</option>
+</select>
 
 <label>Card Color</label>
 <input type="color" id="colorPicker">
 
 <label>Background Image URL</label>
-<input id="bgInput" placeholder="Paste image link">
+<input id="bgInput" placeholder="Paste background image URL">
+
+<label>Foreground Image URL</label>
+<input id="fgInput" placeholder="Paste immune cell image URL">
 
 <button onclick="updateCard()">Apply Design</button>
 
 </div>
 
-<div id="card">
+<div id="card" class="common">
+
+<div id="frame"></div>
 
 <div id="cardName">Cell Name</div>
+
+<div id="foreground"></div>
 
 <div id="cardMarker">Marker: --</div>
 
