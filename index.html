@@ -14,20 +14,29 @@
 
 <div id="controls">
 
-<label>Card Name</label>
+<label>Immune Cell Name</label>
 <input id="nameInput" placeholder="Macrophage">
+
+<label>Cell Surface Marker</label>
+<input id="markerInput" placeholder="CD4">
+
+<label>Attack</label>
+<input id="attackInput" type="number" placeholder="5">
+
+<label>Defense</label>
+<input id="defenseInput" type="number" placeholder="3">
 
 <label>Hit Points</label>
 <input id="hpInput" type="number" placeholder="10">
 
-<label>Defense</label>
-<input id="defInput" type="number" placeholder="5">
+<label>Special Ability</label>
+<input id="abilityInput" placeholder="Engulf Pathogens">
 
 <label>Card Color</label>
 <input type="color" id="colorPicker">
 
-<label>Background Image</label>
-<input type="text" id="bgInput" placeholder="Paste image URL">
+<label>Background Image URL</label>
+<input id="bgInput" placeholder="Paste image link">
 
 <button onclick="updateCard()">Apply Design</button>
 
@@ -37,9 +46,14 @@
 
 <div id="cardName">Cell Name</div>
 
+<div id="cardMarker">Marker: --</div>
+
+<div id="cardAbility">Ability: --</div>
+
 <div id="cardStats">
-HP: <span id="hp">0</span>  
-DEF: <span id="def">0</span>
+ATK: <span id="attack">0</span><br>
+DEF: <span id="defense">0</span><br>
+HP: <span id="hp">0</span>
 </div>
 
 </div>
