@@ -9,6 +9,9 @@ let ability = document.getElementById("abilityInput").value
 
 let color = document.getElementById("colorPicker").value
 let bg = document.getElementById("bgInput").value
+let fg = document.getElementById("fgInput").value
+
+let rarity = document.getElementById("raritySelect").value
 
 if(name){
 document.getElementById("cardName").innerText = name
@@ -28,10 +31,17 @@ document.getElementById("hp").innerText = hp
 
 let card = document.getElementById("card")
 
+card.className = rarity
+
 card.style.backgroundColor = color
 
 if(bg){
 card.style.backgroundImage = "url("+bg+")"
+}
+
+if(fg){
+document.getElementById("foreground").style.backgroundImage =
+"url("+fg+")"
 }
 
 }
